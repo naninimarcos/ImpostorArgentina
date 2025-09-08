@@ -1,0 +1,103 @@
+{
+    "name": "Impostor - Juego de Detectives",
+    "short_name": "Impostor",
+    "description": "Juego de detectives donde debes encontrar al impostor. ¡Perfecto para jugar con amigos!",
+    "start_url": "./Impostor.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0b0b0f",
+    "theme_color": "#ff0033",
+    "categories": [
+        "games",
+        "entertainment",
+        "social"
+    ],
+    "lang": "es-AR",
+    "icons": [
+        {
+            "src": "icons/icon-16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-72.png",
+            "sizes": "72x72",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-96.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-128.png",
+            "sizes": "128x128",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-144.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-152.png",
+            "sizes": "152x152",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-180.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-384.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "screenshots/mobile-1.png",
+            "sizes": "390x844",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Pantalla principal del juego"
+        },
+        {
+            "src": "screenshots/mobile-2.png",
+            "sizes": "390x844",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Configuración de jugadores"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Juego Rápido",
+            "short_name": "Rápido",
+            "description": "Comenzar un juego con configuración por defecto",
+            "url": "./Impostor.html?quick=true",
+            "icons": [
+                {
+                    "src": "icons/icon-96.png",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ]
+}
