@@ -917,7 +917,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
 
-        body        .theme-impostor .theme-item input[type="checkbox"] {
+        body .theme-impostor .theme-item input[type="checkbox"] {
             accent-color: #ff2b4a !important;
         }
 
@@ -2925,13 +2925,13 @@
         }
 
         // ===== FUNCIONES PWA PARA INSTALACIÓN =====
-        
+
         // Función para instalar el juego
         function installGame() {
             if (deferredPrompt) {
                 // Mostrar el prompt de instalación
                 deferredPrompt.prompt();
-                
+
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
                         console.log('Usuario aceptó instalar la PWA');
@@ -2950,15 +2950,15 @@
                 showInstallInstructions();
             }
         }
-        
+
         // Mostrar instrucciones de instalación manual
         function showInstallInstructions() {
             const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isAndroid = /Android/.test(navigator.userAgent);
-            
+
             let instructions = '';
-            
+
             if (isIOS) {
                 instructions = `
                     📱 Para instalar en iPhone/iPad:
@@ -2990,15 +2990,15 @@
                     También puedes usar: Menú → Instalar Impostor
                 `;
             }
-            
+
             alert(instructions);
         }
-        
+
         // Actualizar el estado del botón de instalación
         function updateInstallButton() {
             const installBtn = document.getElementById('install-btn');
             if (!installBtn) return;
-            
+
             if (deferredPrompt) {
                 installBtn.style.display = 'block';
                 installBtn.innerHTML = '📱 Descargar Juego';
@@ -3013,30 +3013,30 @@
                 installBtn.title = 'Ver instrucciones de instalación';
             }
         }
-        
+
         // Event listeners para PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             // Prevenir que Chrome 67 y anteriores muestren automáticamente el prompt
             e.preventDefault();
-            
+
             // Guardar el evento para poder usarlo después
             deferredPrompt = e;
-            
+
             // Mostrar el botón de instalación
             updateInstallButton();
-            
+
             console.log('PWA: Install prompt disponible');
         });
-        
+
         window.addEventListener('appinstalled', (evt) => {
             console.log('PWA: App instalada exitosamente');
             updateInstallButton();
-            
+
             // Analytics
             if (window.va) {
                 window.va('track', 'PWA Installed Successfully');
             }
-            
+
             // Mostrar mensaje de éxito
             setTimeout(() => {
                 alert('🎉 ¡Impostor instalado exitosamente!\n\nYa puedes encontrar el juego en tu pantalla de inicio.');
