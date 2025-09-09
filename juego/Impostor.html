@@ -23,6 +23,12 @@
         content="Juego de detectives donde debes encontrar al impostor. ¡Perfecto para jugar con amigos!">
     <meta name="keywords" content="juego, impostor, detective, amigos, party game, argentina">
     <meta name="author" content="Impostor Game">
+
+    <!-- Vercel Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="https://cdn.vercel-insights.com/v1/script.debug.js"></script>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -130,6 +136,44 @@
             border-radius: 15px;
             margin-bottom: 20px;
             line-height: 1.6;
+            position: relative;
+        }
+
+        .instructions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .instructions-header h3 {
+            margin: 0;
+        }
+
+        .close-instructions {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            line-height: 1;
+        }
+
+        .close-instructions:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .close-instructions:active {
+            transform: scale(0.95);
         }
 
         /* Override para tema impostor */
@@ -138,6 +182,18 @@
             border: 1px solid rgba(255, 255, 255, 0.06) !important;
             border-radius: 14px !important;
             box-shadow: 0 6px 24px rgba(0, 0, 0, .35) !important;
+        }
+
+        .theme-impostor .close-instructions {
+            background: rgba(255, 43, 74, 0.2);
+            border: 1px solid rgba(255, 43, 74, 0.3);
+            color: #fff;
+        }
+
+        .theme-impostor .close-instructions:hover {
+            background: rgba(255, 43, 74, 0.3);
+            border-color: rgba(255, 43, 74, 0.5);
+            box-shadow: 0 0 8px rgba(255, 43, 74, 0.3);
         }
 
         .input-group {
@@ -158,26 +214,65 @@
         input,
         select {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: none;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.9);
             color: #333;
             font-size: 16px;
+            font-weight: 500;
+        }
+
+        select {
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        select option {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 10px;
+            font-weight: 500;
         }
 
         /* Override para inputs en tema impostor */
         body.theme-impostor input,
         body.theme-impostor select {
-            background: rgba(255, 255, 255, 0.06) !important;
+            background: rgba(255, 255, 255, 0.08) !important;
             color: #e6e6ea !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            font-weight: 500 !important;
+        }
+
+        body.theme-impostor select {
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6e6ea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 12px center !important;
+            background-size: 16px !important;
+        }
+
+        body.theme-impostor select option {
+            background: rgba(26, 26, 26, 0.95) !important;
+            color: #e6e6ea !important;
+            padding: 12px !important;
+            font-weight: 500 !important;
         }
 
         body.theme-impostor input:focus,
         body.theme-impostor select:focus {
             border-color: rgba(255, 43, 74, .45) !important;
             box-shadow: 0 0 0 3px rgba(255, 43, 74, .18) !important;
+            outline: none !important;
         }
 
         .btn {
@@ -256,17 +351,32 @@
 
         .word-card {
             background: rgba(255, 255, 255, 0.15);
-            padding: 30px;
-            border-radius: 15px;
+            padding: 40px 30px;
+            border-radius: 20px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .word {
-            font-size: 2em;
+            font-size: 2.5em;
             font-weight: bold;
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin: 10px 0;
+        }
+
+        /* Nombre del jugador actual */
+        #current-player-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--accent-color);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .hint {
@@ -302,24 +412,53 @@
         }
 
         .vote-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin: 30px 0 50px 0;
+            padding: 0;
+            width: 100%;
         }
 
         .vote-btn {
-            padding: 10px;
+            width: 100%;
+            padding: 25px 20px;
             background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             color: white;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            font-weight: 700;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            word-wrap: break-word;
+            hyphens: auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
         }
 
         .vote-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .vote-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .vote-btn.selected {
+            background: rgba(255, 235, 59, 0.3);
+            border-color: rgba(255, 235, 59, 0.8);
+            box-shadow: 0 0 20px rgba(255, 235, 59, 0.4), 0 8px 25px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
         }
 
         .timer {
@@ -350,10 +489,53 @@
         .vote-summary-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 12px 16px;
             background: var(--card-bg);
-            margin: 4px 0;
-            border-radius: 8px;
+            margin: 8px 0;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        /* Mejoras específicas para la pantalla de votación */
+        #voting-screen {
+            padding: 0;
+        }
+
+        #voting-info {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        #voting-info p {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        #current-voter {
+            font-weight: 800;
+            color: var(--accent-color);
+            font-size: 1.2em;
+            text-shadow: 0 2px 8px rgba(255, 235, 59, 0.3);
+        }
+
+        #vote-summary {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        #vote-summary h3 {
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3em;
         }
 
         .word-card {
@@ -467,6 +649,26 @@
             box-shadow: 0 6px 24px rgba(0, 0, 0, .35);
         }
 
+        /* Tarjetas de roles más grandes en tema impostor */
+        .theme-impostor .word-card {
+            padding: 50px 35px;
+            min-height: 250px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, .5);
+        }
+
+        .theme-impostor .word {
+            font-size: 2.8em;
+            margin: 15px 0;
+        }
+
+        .theme-impostor #current-player-name {
+            font-size: 2.2em;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(255, 122, 144, .4);
+            margin-bottom: 30px;
+        }
+
         /* Variante impostor y victoria/derrota */
         .theme-impostor .word-card.impostor {
             background: linear-gradient(180deg, rgba(255, 0, 51, 0.1), rgba(255, 0, 51, 0.05));
@@ -539,12 +741,24 @@
 
         /* Botones de voto con borde animado */
         .theme-impostor .vote-btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid rgba(255, 255, 255, 0.15);
             color: #fff;
-            border-radius: 12px;
+            border-radius: 20px;
             position: relative;
             overflow: hidden;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 25px 20px;
+            min-height: 90px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            word-wrap: break-word;
+            hyphens: auto;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .theme-impostor .vote-btn::after {
@@ -557,13 +771,22 @@
         }
 
         .theme-impostor .vote-btn:hover {
-            border-color: rgba(255, 43, 74, .45);
-            box-shadow: var(--glow);
+            border-color: rgba(255, 43, 74, .6);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: var(--glow), 0 10px 35px rgba(0, 0, 0, 0.6);
+            transform: translateY(-4px);
+        }
+
+        .theme-impostor .vote-btn:active {
+            transform: translateY(-2px);
+            box-shadow: var(--glow), 0 8px 25px rgba(0, 0, 0, 0.5);
         }
 
         .theme-impostor .vote-btn.selected {
-            background: rgba(255, 0, 51, .18);
-            border-color: rgba(255, 0, 51, .6);
+            background: rgba(255, 0, 51, .25);
+            border-color: rgba(255, 0, 51, .8);
+            box-shadow: var(--glow), 0 0 30px rgba(255, 43, 74, .6), 0 10px 35px rgba(0, 0, 0, 0.6);
+            transform: translateY(-3px);
         }
 
         /* ====== TIMER ====== */
@@ -599,6 +822,30 @@
             }
         }
 
+        /* ====== VOTACIÓN EN TEMA IMPOSTOR ====== */
+        .theme-impostor #voting-info {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .35);
+        }
+
+        .theme-impostor #current-voter {
+            color: var(--accent);
+            text-shadow: 0 0 8px rgba(255, 122, 144, .4);
+        }
+
+        .theme-impostor #vote-summary {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .35);
+        }
+
+        .theme-impostor .vote-summary-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #e6e6ea;
+        }
+
         /* ====== RESPONSIVE FINO ====== */
         @media (max-width: 480px) {
             .theme-impostor h1 {
@@ -607,6 +854,45 @@
 
             .theme-impostor .container {
                 padding: 22px;
+            }
+
+            .vote-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 22px;
+                margin: 25px 0 40px 0;
+                width: 100%;
+            }
+
+            .vote-btn {
+                width: 100%;
+                min-height: 80px;
+                padding: 22px 18px;
+                font-size: 17px;
+                font-weight: 700;
+                box-sizing: border-box;
+            }
+
+            .theme-impostor .vote-btn {
+                width: 100%;
+                min-height: 80px;
+                padding: 22px 18px;
+                font-size: 17px;
+                box-sizing: border-box;
+            }
+
+            .theme-impostor .word-card {
+                padding: 35px 25px;
+                min-height: 200px;
+            }
+
+            .theme-impostor .word {
+                font-size: 2.3em;
+            }
+
+            .theme-impostor #current-player-name {
+                font-size: 1.8em;
+                margin-bottom: 20px;
             }
         }
 
@@ -647,6 +933,137 @@
             cursor: pointer;
         }
 
+        /* Estilos para pantalla de palabras personalizadas */
+        #custom-words-list {
+            margin-top: 25px;
+        }
+
+        #custom-words-list h3 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .custom-word-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .custom-word-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .custom-word-info strong {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: var(--accent-color);
+        }
+
+        .custom-word-info small {
+            display: block;
+            opacity: 0.8;
+            margin: 2px 0;
+        }
+
+        .custom-word-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            min-height: auto;
+            width: auto;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+        }
+
+        /* Override para tema impostor en palabras personalizadas */
+        .theme-impostor .custom-word-item {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .theme-impostor .custom-word-info strong {
+            color: var(--accent);
+        }
+
+        /* Estilos para la pantalla de instrucciones */
+        #how-to-play-screen .game-description {
+            margin-bottom: 25px;
+        }
+
+        #how-to-play-screen h3 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid rgba(255, 235, 59, 0.3);
+            padding-bottom: 8px;
+        }
+
+        #how-to-play-screen p {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        #how-to-play-screen strong {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        #how-to-play-screen em {
+            color: var(--accent-color);
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        /* Override para tema impostor en instrucciones */
+        .theme-impostor #how-to-play-screen h3 {
+            color: var(--accent);
+            border-bottom-color: rgba(255, 122, 144, 0.3);
+        }
+
+        .theme-impostor #how-to-play-screen em {
+            color: var(--accent);
+        }
+
+        /* Responsive para tablets */
+        @media (max-width: 768px) and (min-width: 481px) {
+            .vote-buttons {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                width: 100%;
+            }
+
+            .vote-btn {
+                width: 100%;
+                min-height: 85px;
+                padding: 24px 18px;
+                font-size: 17px;
+                box-sizing: border-box;
+            }
+
+            .theme-impostor .vote-btn {
+                width: 100%;
+                min-height: 85px;
+                padding: 24px 18px;
+                font-size: 17px;
+                box-sizing: border-box;
+            }
+        }
+
         @media (max-width: 480px) {
             .container {
                 width: 95%;
@@ -660,6 +1077,15 @@
             .themes-grid {
                 grid-template-columns: 1fr;
             }
+
+            .custom-word-item {
+                flex-direction: column;
+            }
+
+            .custom-word-actions {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -669,8 +1095,12 @@
         <!-- Pantalla de Inicio -->
         <div id="home-screen" class="screen active">
             <h1>🕵️ IMPOSTOR</h1>
-            <div class="game-description">
-                <h3>¿Cómo se juega?</h3>
+            <div class="game-description" id="game-instructions">
+                <div class="instructions-header">
+                    <h3>¿Cómo se juega?</h3>
+                    <button class="close-instructions" onclick="hideInstructions()"
+                        title="Cerrar instrucciones">✕</button>
+                </div>
                 <p>• Uno o más jugadores serán <strong>impostores</strong></p>
                 <p>• Los demás conocen la <strong>palabra secreta</strong></p>
                 <p>• Hagan preguntas para descubrir quién es el impostor</p>
@@ -708,6 +1138,7 @@
                 <select id="difficulty">
                     <option value="easy">🟢 Fácil - Pistas claras</option>
                     <option value="hard" selected>🔴 Difícil - Pistas genéricas</option>
+                    <option value="impossible">⚫ Imposible - Solo categoría</option>
                 </select>
             </div>
 
@@ -732,7 +1163,7 @@
                     </div>
                     <div class="theme-item">
                         <input type="checkbox" id="cordobes" checked>
-                        <label for="cordobes">🎵 Córdoba</label>
+                        <label for="cordobes">🏙️ Córdoba</label>
                     </div>
                     <div class="theme-item">
                         <input type="checkbox" id="tango_folklore" checked>
@@ -754,6 +1185,22 @@
                         <input type="checkbox" id="lunfardo_jerga">
                         <label for="lunfardo_jerga">🗣️ Lunfardo</label>
                     </div>
+                    <div class="theme-item">
+                        <input type="checkbox" id="futbolistas">
+                        <label for="futbolistas">⚽ Futbolistas</label>
+                    </div>
+                    <div class="theme-item">
+                        <input type="checkbox" id="peleadores">
+                        <label for="peleadores">🥊 Peleadores</label>
+                    </div>
+                    <div class="theme-item">
+                        <input type="checkbox" id="musica">
+                        <label for="musica">🎵 Música</label>
+                    </div>
+                    <div class="theme-item">
+                        <input type="checkbox" id="libre_amigos">
+                        <label for="libre_amigos">👥 Libre Amigos</label>
+                    </div>
                     <div class="theme-item private-theme" style="display: none;">
                         <input type="checkbox" id="categoria_privada">
                         <label for="categoria_privada">🔒 Privada +18</label>
@@ -766,6 +1213,113 @@
             </div>
 
             <button class="btn" onclick="setupPlayers()">Configurar Jugadores</button>
+            <button class="btn btn-secondary" onclick="showHowToPlay()">📖 Cómo Jugar</button>
+            <button class="btn btn-secondary" onclick="showCustomWords()" id="custom-words-btn"
+                style="display: none;">✏️ Gestionar Palabras Personalizadas</button>
+        </div>
+
+        <!-- Pantalla de Palabras Personalizadas -->
+        <div id="custom-words-screen" class="screen">
+            <h2>👥 Palabras Personalizadas</h2>
+            <div class="game-description">
+                <p>Crea tus propias palabras para jugar con amigos</p>
+                <p>• Ingresa una palabra y sus pistas</p>
+                <p>• Puedes usar nombres, lugares, referencias internas</p>
+                <p>• ¡Agrega tantas palabras como quieras!</p>
+            </div>
+
+            <div class="input-group">
+                <label for="custom-word">Palabra:</label>
+                <input type="text" id="custom-word" placeholder="Ej: NOMBRE DEL AMIGO" maxlength="30">
+            </div>
+
+            <div class="input-group">
+                <label for="custom-easy-hint">Pista Fácil:</label>
+                <input type="text" id="custom-easy-hint" placeholder="Pista obvia" maxlength="50">
+            </div>
+
+            <div class="input-group">
+                <label for="custom-hard-hint">Pista Difícil:</label>
+                <input type="text" id="custom-hard-hint" placeholder="Pista genérica" maxlength="50">
+            </div>
+
+            <button class="btn" onclick="addCustomWord()">➕ Agregar Palabra</button>
+
+            <div id="custom-words-list">
+                <h3>Palabras Agregadas:</h3>
+                <div id="custom-words-container"></div>
+            </div>
+
+            <button class="btn btn-secondary" onclick="goHome()">Volver</button>
+        </div>
+
+        <!-- Pantalla de Cómo Jugar -->
+        <div id="how-to-play-screen" class="screen">
+            <h2>📖 Cómo Jugar</h2>
+
+            <div class="game-description">
+                <h3>🎯 Objetivo del Juego</h3>
+                <p>Los <strong>detectives</strong> deben descubrir quién es el <strong>impostor</strong> antes de que
+                    termine el tiempo.</p>
+                <p>El <strong>impostor</strong> debe pasar desapercibido y no ser descubierto.</p>
+            </div>
+
+            <div class="game-description">
+                <h3>🏆 Sistema de Puntuación</h3>
+                <p>• <strong>Si el impostor NO es descubierto:</strong> El impostor gana <span
+                        style="color: #ffeb3b;">15 puntos</span></p>
+                <p>• <strong>Si el impostor ES descubierto:</strong> Los detectives ganan <span
+                        style="color: #ffeb3b;">10 puntos</span></p>
+                <p>• <strong>Eliminación:</strong> Se juega una sola ronda por cada impostor que existe</p>
+            </div>
+
+            <div class="game-description">
+                <h3>🎮 Modalidad 1: Palabra por Turno</h3>
+                <p><strong>Más difícil para el impostor</strong></p>
+                <p>• Cada jugador dice <strong>una palabra</strong> relacionada con la palabra secreta</p>
+                <p>• Se pueden hacer <strong>varias rondas</strong> de palabras</p>
+                <p>• Al final se vota quién es el impostor</p>
+                <p>• <em>Ideal para pocos jugadores (3-5)</em></p>
+            </div>
+
+            <div class="game-description">
+                <h3>🎮 Modalidad 2: Preguntas Genéricas</h3>
+                <p><strong>Modalidad más divertida y equilibrada</strong></p>
+                <p>• Se hacen <strong>preguntas genéricas</strong> que no mencionen la palabra directamente</p>
+                <p>• Ejemplos: "¿Con qué color lo identificas?", "¿Te gustaría conocerlo?", "¿Es grande o pequeño?"</p>
+                <p>• Todos responden por turnos</p>
+                <p>• <strong>Preguntas y respuestas cruzadas</strong> para crear confusión</p>
+                <p>• <em>La modalidad que más posibilidades da al impostor</em></p>
+            </div>
+
+            <div class="game-description">
+                <h3>🎮 Modalidad 3: Preguntas Abiertas</h3>
+                <p><strong>Modalidad libre y espontánea</strong></p>
+                <p>• Se hacen <strong>preguntas generales</strong> sobre la palabra</p>
+                <p>• <strong>Respuesta libre:</strong> Quien quiera puede contestar</p>
+                <p>• Permite más interacción y conversación</p>
+                <p>• <em>Ideal para grupos grandes y dinámicos</em></p>
+            </div>
+
+            <div class="game-description">
+                <h3>💡 Consejos para Impostores</h3>
+                <p>• <strong>Observa</strong> las respuestas de otros antes de hablar</p>
+                <p>• <strong>Copia el estilo</strong> de respuestas de los demás</p>
+                <p>• <strong>Sé genérico</strong> pero no demasiado obvio</p>
+                <p>• <strong>Usa las pistas</strong> que recibes para guiarte</p>
+                <p>• <strong>Mantén la calma</strong> y actúa natural</p>
+            </div>
+
+            <div class="game-description">
+                <h3>🔍 Consejos para Detectives</h3>
+                <p>• <strong>Escucha atentamente</strong> las respuestas de todos</p>
+                <p>• <strong>Busca inconsistencias</strong> en las respuestas</p>
+                <p>• <strong>Haz preguntas estratégicas</strong> que revelen conocimiento</p>
+                <p>• <strong>Observa el lenguaje corporal</strong> y dudas</p>
+                <p>• <strong>No votes al azar</strong>, discutan antes de decidir</p>
+            </div>
+
+            <button class="btn btn-secondary" onclick="goHome()">Volver al Menú</button>
         </div>
 
         <!-- Pantalla de Configuración de Jugadores -->
@@ -869,7 +1423,8 @@
                 scores: gameState.scores,
                 activeThemes: activeThemes,
                 privateUnlocked: privateUnlocked,
-                difficulty: document.getElementById('difficulty').value
+                difficulty: document.getElementById('difficulty').value,
+                customWords: wordsByTheme.libre_amigos
             };
             localStorage.setItem('impostorGameData', JSON.stringify(dataToSave));
         }
@@ -894,7 +1449,15 @@
                     }
                 }
                 if (data.difficulty) {
-                    document.getElementById('difficulty').value = data.difficulty;
+                    const difficultySelect = document.getElementById('difficulty');
+                    // Verificar que la dificultad guardada sea válida
+                    const validDifficulties = ['easy', 'hard', 'impossible'];
+                    if (validDifficulties.includes(data.difficulty)) {
+                        difficultySelect.value = data.difficulty;
+                    }
+                }
+                if (data.customWords) {
+                    wordsByTheme.libre_amigos = data.customWords;
                 }
             }
         }
@@ -1122,7 +1685,115 @@
                 { word: "GLOBOLUDO", easyHint: "Clarín", hardHint: "Opositor" },
                 { word: "PLANERO", easyHint: "Subsidio", hardHint: "Vago" },
                 { word: "CHETO", easyHint: "Rico", hardHint: "Snob" }
-            ]
+            ],
+            "futbolistas": [
+                // Argentinos
+                { word: "MESSI", easyHint: "Pulga", hardHint: "Rosario" },
+                { word: "MARADONA", easyHint: "Diez", hardHint: "Dios" },
+                { word: "DI MARÍA", easyHint: "Fideo", hardHint: "Ángel" },
+                { word: "AGÜERO", easyHint: "Kun", hardHint: "Sergio" },
+                { word: "HIGUAÍN", easyHint: "Pipita", hardHint: "Gonzalo" },
+                { word: "MASCHERANO", easyHint: "Jefe", hardHint: "Javier" },
+                { word: "RIQUELME", easyHint: "Román", hardHint: "Boca" },
+                { word: "AIMAR", easyHint: "Payaso", hardHint: "Pablo" },
+                { word: "TEVEZ", easyHint: "Apache", hardHint: "Carlos" },
+                { word: "CRESPO", easyHint: "Valdanito", hardHint: "Hernán" },
+                { word: "BATISTUTA", easyHint: "Batigol", hardHint: "Gabriel" },
+                { word: "CANIGGIA", easyHint: "Pájaro", hardHint: "Claudio" },
+                { word: "REDONDO", easyHint: "Príncipe", hardHint: "Fernando" },
+                { word: "KEMPES", easyHint: "Matador", hardHint: "Mario" },
+                { word: "PASSARELLA", easyHint: "Kaiser", hardHint: "Daniel" },
+                // Internacionales muy famosos
+                { word: "CRISTIANO", easyHint: "CR7", hardHint: "Portugal" },
+                { word: "RONALDINHO", easyHint: "Dientes", hardHint: "Brasil" },
+                { word: "PELÉ", easyHint: "Rey", hardHint: "Brasil" },
+                { word: "NEYMAR", easyHint: "Junior", hardHint: "Brasil" },
+                { word: "MBAPPÉ", easyHint: "Tortuga", hardHint: "Francia" },
+                { word: "HAALAND", easyHint: "Robot", hardHint: "Noruega" },
+                { word: "BENZEMA", easyHint: "Gato", hardHint: "Francia" },
+                { word: "LEWANDOWSKI", easyHint: "Polaco", hardHint: "Robert" },
+                { word: "SALAH", easyHint: "Egipcio", hardHint: "Mohamed" },
+                { word: "MODRIC", easyHint: "Croata", hardHint: "Luka" }
+            ],
+            "peleadores": [
+                // UFC Hombres
+                { word: "MCGREGOR", easyHint: "Irlandés", hardHint: "Conor" },
+                { word: "KHABIB", easyHint: "Águila", hardHint: "Daguestán" },
+                { word: "JON JONES", easyHint: "Huesos", hardHint: "Campeón" },
+                { word: "SILVA", easyHint: "Araña", hardHint: "Anderson" },
+                { word: "GSP", easyHint: "Canadiense", hardHint: "Georges" },
+                { word: "FEDOR", easyHint: "Ruso", hardHint: "Emperador" },
+                { word: "CHUCK LIDDELL", easyHint: "Iceman", hardHint: "Chuck" },
+                { word: "TITO ORTIZ", easyHint: "Huntington", hardHint: "Tito" },
+                // UFC Mujeres
+                { word: "RONDA ROUSEY", easyHint: "Judo", hardHint: "Ronda" },
+                { word: "AMANDA NUNES", easyHint: "Leona", hardHint: "Brasil" },
+                { word: "VALENTINA", easyHint: "Bala", hardHint: "Shevchenko" },
+                { word: "ROSE NAMAJUNAS", easyHint: "Thug", hardHint: "Rose" },
+                // Boxeo Hombres
+                { word: "MIKE TYSON", easyHint: "Iron", hardHint: "Mike" },
+                { word: "MUHAMMAD ALI", easyHint: "Grande", hardHint: "Float" },
+                { word: "FLOYD", easyHint: "Money", hardHint: "Mayweather" },
+                { word: "MANNY", easyHint: "Pacman", hardHint: "Pacquiao" },
+                { word: "CANELO", easyHint: "Mexicano", hardHint: "Saúl" },
+                { word: "ANTHONY JOSHUA", easyHint: "AJ", hardHint: "Inglés" },
+                { word: "TYSON FURY", easyHint: "Gypsy", hardHint: "King" },
+                // Boxeo Mujeres
+                { word: "LAILA ALI", easyHint: "Hija", hardHint: "Muhammad" },
+                { word: "CLARESSA SHIELDS", easyHint: "GWOAT", hardHint: "Claressa" },
+                // Argentinos
+                { word: "MARAVILLA", easyHint: "Martínez", hardHint: "Sergio" },
+                { word: "CHINO MAIDANA", easyHint: "Marcos", hardHint: "Santa Fe" },
+                { word: "BONADEO", easyHint: "Omar", hardHint: "Narváez" }
+            ],
+            "musica": [
+                // Argentinos Rock/Pop
+                { word: "CHARLY GARCÍA", easyHint: "Sui", hardHint: "Generis" },
+                { word: "FITO PÁEZ", easyHint: "Ciudad", hardHint: "Baigón" },
+                { word: "GUSTAVO CERATI", easyHint: "Soda", hardHint: "Stereo" },
+                { word: "SPINETTA", easyHint: "Flaco", hardHint: "Luis" },
+                { word: "ANDRÉS CALAMARO", easyHint: "Salmón", hardHint: "Andrés" },
+                { word: "VICENTICO", easyHint: "Fabulosos", hardHint: "Cadillacs" },
+                { word: "BERSUIT", easyHint: "Vergarabat", hardHint: "Banda" },
+                { word: "LA RENGA", easyHint: "Chizzo", hardHint: "Rock" },
+                { word: "DIVIDIDOS", easyHint: "Mollo", hardHint: "Ricardo" },
+                { word: "RATA BLANCA", easyHint: "Metal", hardHint: "Giardino" },
+                // Cuarteto/Folklore
+                { word: "LA MONA", easyHint: "Jiménez", hardHint: "Córdoba" },
+                { word: "RODRIGO", easyHint: "Potro", hardHint: "Cuarteto" },
+                { word: "SOLEDAD", easyHint: "Folklore", hardHint: "Pastorutti" },
+                { word: "CHAQUEÑO PALAVECINO", easyHint: "Folklore", hardHint: "Chaqueño" },
+                { word: "ABEL PINTOS", easyHint: "Bahía", hardHint: "Blanca" },
+                // Tango
+                { word: "GARDEL", easyHint: "Zorzal", hardHint: "Carlos" },
+                { word: "PIAZZOLLA", easyHint: "Astor", hardHint: "Bandoneón" },
+                // Trap/Urbano Argentino
+                { word: "BIZARRAP", easyHint: "Sessions", hardHint: "Biza" },
+                { word: "DUKI", easyHint: "Trap", hardHint: "Mauro" },
+                { word: "TRUENO", easyHint: "Freestyle", hardHint: "Mateo" },
+                { word: "TINI", easyHint: "Stoessel", hardHint: "Martina" },
+                { word: "MARIA BECERRA", easyHint: "Nena", hardHint: "María" },
+                { word: "NATHY PELUSO", easyHint: "Buenos", hardHint: "Aires" },
+                // Internacionales súper famosos
+                { word: "MICHAEL JACKSON", easyHint: "Rey", hardHint: "Pop" },
+                { word: "MADONNA", easyHint: "Reina", hardHint: "Pop" },
+                { word: "QUEEN", easyHint: "Freddie", hardHint: "Mercury" },
+                { word: "THE BEATLES", easyHint: "Liverpool", hardHint: "Cuatro" },
+                { word: "ELVIS PRESLEY", easyHint: "Rey", hardHint: "Rock" },
+                { word: "BOB MARLEY", easyHint: "Jamaica", hardHint: "Reggae" },
+                { word: "SHAKIRA", easyHint: "Cadera", hardHint: "Colombia" },
+                { word: "EMINEM", easyHint: "Rap", hardHint: "Marshall" },
+                { word: "TAYLOR SWIFT", easyHint: "Country", hardHint: "Taylor" },
+                { word: "ED SHEERAN", easyHint: "Pelirrojo", hardHint: "Shape" },
+                { word: "ADELE", easyHint: "Rolling", hardHint: "Deep" },
+                { word: "BEYONCÉ", easyHint: "Single", hardHint: "Ladies" },
+                // Canciones súper famosas
+                { word: "DESPACITO", easyHint: "Luis", hardHint: "Fonsi" },
+                { word: "MACARENA", easyHint: "Baile", hardHint: "España" },
+                { word: "GANGNAM STYLE", easyHint: "PSY", hardHint: "Corea" },
+                { word: "BOHEMIAN RHAPSODY", easyHint: "Queen", hardHint: "Opera" }
+            ],
+            "libre_amigos": []
         };
 
         // Configuración de temáticas activas
@@ -1137,7 +1808,11 @@
             "transporte": false,
             "animales_pampa": false,
             "lunfardo_jerga": false,
-            "categoria_privada": false
+            "categoria_privada": false,
+            "futbolistas": false,
+            "peleadores": false,
+            "musica": false,
+            "libre_amigos": false
         };
 
         // Estado de categoría privada
@@ -1191,32 +1866,57 @@
                     activeThemes[theme] = checkbox.checked;
                 }
             });
+
+            // Mostrar/ocultar botón de palabras personalizadas
+            const customBtn = document.getElementById('custom-words-btn');
+            const libreAmigosChecked = document.getElementById('libre_amigos').checked;
+            customBtn.style.display = libreAmigosChecked ? 'block' : 'none';
         }
 
         function getRandomWordFromActiveThemes() {
-            // Recopilar todas las palabras de las temáticas activas
+            // Recopilar todas las palabras de las temáticas activas con su categoría
             const allWords = [];
 
             Object.keys(activeThemes).forEach(theme => {
                 if (activeThemes[theme] && wordsByTheme[theme]) {
-                    allWords.push(...wordsByTheme[theme]);
+                    wordsByTheme[theme].forEach(wordObj => {
+                        allWords.push({
+                            ...wordObj,
+                            category: theme
+                        });
+                    });
                 }
             });
 
             if (allWords.length === 0) {
                 // Fallback: usar comida argentina si no hay temáticas activas
-                return wordsByTheme.comida_argentina[0];
+                const fallbackWord = wordsByTheme.comida_argentina[0];
+                return {
+                    word: fallbackWord.word,
+                    hint: fallbackWord.easyHint,
+                    category: 'comida_argentina'
+                };
             }
 
             const selectedWord = allWords[Math.floor(Math.random() * allWords.length)];
 
             // Determinar qué pista usar según la dificultad
             const difficulty = document.getElementById('difficulty').value;
-            const hint = difficulty === 'easy' ? selectedWord.easyHint : selectedWord.hardHint;
+            let hint;
+
+            if (difficulty === 'easy') {
+                hint = selectedWord.easyHint;
+            } else if (difficulty === 'hard') {
+                hint = selectedWord.hardHint;
+            } else if (difficulty === 'impossible') {
+                // Solo mostrar la categoría
+                hint = categoryNames[selectedWord.category] || 'Categoría desconocida';
+            }
 
             return {
                 word: selectedWord.word,
-                hint: hint
+                hint: hint,
+                category: selectedWord.category
             };
         }
 
@@ -1237,6 +1937,11 @@
                     document.querySelector('.private-theme').style.display = 'flex';
                     document.getElementById('private-btn').textContent = '🔓 Ocultar Categoría Privada';
                     alert('✅ Categoría privada desbloqueada. Úsala responsablemente con amigos cercanos.');
+
+                    // Analytics: Track private category unlock
+                    if (window.va) {
+                        window.va('track', 'Private Category Unlocked');
+                    }
                 } else if (password !== null) {
                     alert('❌ Contraseña incorrecta');
                 }
@@ -1246,6 +1951,15 @@
         function startGame() {
             const playerCount = parseInt(document.getElementById('player-count').value);
             const impostorCount = parseInt(document.getElementById('impostor-count').value);
+
+            // Analytics: Track game start
+            if (window.va) {
+                window.va('track', 'Game Started', {
+                    players: playerCount,
+                    impostors: impostorCount,
+                    difficulty: document.getElementById('difficulty').value
+                });
+            }
 
             // Recoger nombres de jugadores con validación
             gameState.players = [];
@@ -1287,6 +2001,7 @@
             const randomWord = getRandomWordFromActiveThemes();
             gameState.currentWord = randomWord.word;
             gameState.currentHint = randomWord.hint;
+            gameState.currentCategory = randomWord.category;
 
             // Reiniciar estado
             gameState.currentPlayerIndex = 0;
@@ -1482,13 +2197,24 @@
         function startVoting() {
             if (gameState.gameTimer) {
                 clearInterval(gameState.gameTimer);
+                gameState.gameTimer = null;
             }
 
-            // Reiniciar sistema de votación
+            // Reiniciar sistema de votación completamente
             gameState.votes = {};
             gameState.votesCount = {};
             gameState.currentVoterIndex = 0;
             gameState.selectedVote = null;
+
+            // Resetear elementos de la UI de votación
+            document.getElementById('vote-buttons').style.display = 'block';
+            document.getElementById('vote-summary').style.display = 'none';
+            document.getElementById('vote-btn').style.display = 'block';
+            document.getElementById('summary-btn').style.display = 'none';
+            document.getElementById('voting-info').innerHTML = `
+                <p>Votando: <span id="current-voter" aria-live="polite"></span></p>
+                <p>¿Quién crees que es el impostor?</p>
+            `;
 
             setupVotingRound();
             showScreen('voting-screen');
@@ -1611,6 +2337,17 @@
             const isImpostorVoted = gameState.impostors.includes(votedPlayer);
             const resultsContent = document.getElementById('results-content');
 
+            // Analytics: Track game end
+            if (window.va) {
+                window.va('track', 'Game Ended', {
+                    result: isImpostorVoted ? 'Detectives Win' : 'Impostor Win',
+                    players: gameState.players.length,
+                    impostors: gameState.impostors.length,
+                    votedPlayer: votedPlayer,
+                    votes: votes
+                });
+            }
+
             if (isImpostorVoted) {
                 resultsContent.innerHTML = `
                     <div class="word-card success">
@@ -1671,9 +2408,19 @@
         }
 
         function playAgain() {
-            // Mantener jugadores y puntuaciones, solo reiniciar el juego
+            // Limpiar timer anterior si existe
+            if (gameState.gameTimer) {
+                clearInterval(gameState.gameTimer);
+                gameState.gameTimer = null;
+            }
+
+            // Mantener jugadores y puntuaciones, pero reiniciar completamente el estado del juego
             gameState.currentPlayerIndex = 0;
+            gameState.currentVoterIndex = 0;
             gameState.votes = {};
+            gameState.votesCount = {};
+            gameState.selectedVote = null;
+            gameState.timeLeft = parseInt(document.getElementById('game-time').value);
 
             // Nueva palabra y nuevos impostores
             const impostorCount = gameState.impostors.length;
@@ -1683,6 +2430,17 @@
             const randomWord = getRandomWordFromActiveThemes();
             gameState.currentWord = randomWord.word;
             gameState.currentHint = randomWord.hint;
+            gameState.currentCategory = randomWord.category;
+
+            // Resetear elementos de la UI de votación
+            document.getElementById('vote-buttons').style.display = 'block';
+            document.getElementById('vote-summary').style.display = 'none';
+            document.getElementById('vote-btn').style.display = 'block';
+            document.getElementById('summary-btn').style.display = 'none';
+            document.getElementById('voting-info').innerHTML = `
+                <p>Votando: <span id="current-voter" aria-live="polite"></span></p>
+                <p>¿Quién crees que es el impostor?</p>
+            `;
 
             showRoles();
         }
@@ -1704,7 +2462,15 @@
         document.getElementById('player-count').addEventListener('change', function () {
             const playerCount = parseInt(this.value);
             const impostorSelect = document.getElementById('impostor-count');
-            const maxImpostors = Math.min(3, Math.max(1, Math.floor((playerCount - 1) / 3)));
+
+            // A partir de 6 jugadores se permite 2 impostores
+            let maxImpostors = 1;
+            if (playerCount >= 6) {
+                maxImpostors = 2;
+            }
+            if (playerCount >= 9) {
+                maxImpostors = 3;
+            }
 
             impostorSelect.innerHTML = '';
             for (let i = 1; i <= maxImpostors; i++) {
@@ -1715,12 +2481,433 @@
             }
         });
 
+        // Función para mostrar instrucciones
+        function showHowToPlay() {
+            showScreen('how-to-play-screen');
+        }
+
+        // Función para ocultar instrucciones en pantalla principal
+        function hideInstructions() {
+            const instructions = document.getElementById('game-instructions');
+            instructions.style.display = 'none';
+
+            // Guardar preferencia
+            localStorage.setItem('hideInstructions', 'true');
+        }
+
+        // Función para mostrar instrucciones si no se han ocultado
+        function checkInstructionsVisibility() {
+            const hideInstructions = localStorage.getItem('hideInstructions');
+            const instructions = document.getElementById('game-instructions');
+
+            if (hideInstructions === 'true') {
+                instructions.style.display = 'none';
+            } else {
+                instructions.style.display = 'block';
+            }
+        }
+
+        // Funciones para manejar palabras personalizadas
+        function showCustomWords() {
+            loadCustomWords();
+            showScreen('custom-words-screen');
+        }
+
+        function addCustomWord() {
+            const word = document.getElementById('custom-word').value.trim().toUpperCase();
+            const easyHint = document.getElementById('custom-easy-hint').value.trim();
+            const hardHint = document.getElementById('custom-hard-hint').value.trim();
+
+            if (!word || !easyHint || !hardHint) {
+                alert('¡Completa todos los campos!');
+                return;
+            }
+
+            if (word.length > 30) {
+                alert('La palabra es muy larga (máximo 30 caracteres)');
+                return;
+            }
+
+            // Verificar si ya existe
+            const exists = wordsByTheme.libre_amigos.some(item => item.word === word);
+            if (exists) {
+                alert('Esta palabra ya existe');
+                return;
+            }
+
+            // Agregar palabra
+            wordsByTheme.libre_amigos.push({
+                word: word,
+                easyHint: easyHint,
+                hardHint: hardHint
+            });
+
+            // Analytics: Track custom word added
+            if (window.va) {
+                window.va('track', 'Custom Word Added', {
+                    totalCustomWords: wordsByTheme.libre_amigos.length
+                });
+            }
+
+            // Limpiar campos
+            document.getElementById('custom-word').value = '';
+            document.getElementById('custom-easy-hint').value = '';
+            document.getElementById('custom-hard-hint').value = '';
+
+            // Actualizar lista y guardar
+            loadCustomWords();
+            saveGameData();
+        }
+
+        function loadCustomWords() {
+            const container = document.getElementById('custom-words-container');
+            container.innerHTML = '';
+
+            if (wordsByTheme.libre_amigos.length === 0) {
+                container.innerHTML = '<p style="opacity: 0.7; text-align: center;">No hay palabras personalizadas aún</p>';
+                return;
+            }
+
+            wordsByTheme.libre_amigos.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'custom-word-item';
+                div.innerHTML = `
+                    <div class="custom-word-info">
+                        <strong>${item.word}</strong>
+                        <small>Fácil: ${item.easyHint}</small>
+                        <small>Difícil: ${item.hardHint}</small>
+                    </div>
+                    <div class="custom-word-actions">
+                        <button class="btn btn-small btn-danger" onclick="removeCustomWord(${index})">🗑️ Eliminar</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removeCustomWord(index) {
+            if (confirm('¿Eliminar esta palabra personalizada?')) {
+                wordsByTheme.libre_amigos.splice(index, 1);
+                loadCustomWords();
+                saveGameData();
+            }
+        }
+
+        // ===== Sistema de pistas genéricas V3 =====
+        const themeFallback = {
+            comida_argentina: "comida",
+            bebidas_argentinas: "bebida",
+            futbol_argentino: "fútbol",
+            lugares_argentina: "lugar",
+            cordobes: "cultura",
+            tango_folklore: "tradición",
+            politica_historia: "historia",
+            transporte: "movilidad",
+            animales_pampa: "animal",
+            lunfardo_jerga: "jerga",
+            categoria_privada: "tema sensible",
+            futbolistas: "jugador",
+            peleadores: "lucha",
+            musica: "música",
+            libre_amigos: "personal"
+        };
+
+        // Nombres amigables de categorías para dificultad "Imposible"
+        const categoryNames = {
+            comida_argentina: "Comida Argentina",
+            bebidas_argentinas: "Bebidas Argentinas",
+            futbol_argentino: "Fútbol Argentino",
+            lugares_argentina: "Lugares de Argentina",
+            cordobes: "Córdoba",
+            tango_folklore: "Tango y Folklore",
+            politica_historia: "Política e Historia",
+            transporte: "Transporte",
+            animales_pampa: "Animales de la Pampa",
+            lunfardo_jerga: "Lunfardo y Jerga",
+            categoria_privada: "Categoría Privada",
+            futbolistas: "Futbolistas",
+            peleadores: "Peleadores",
+            musica: "Música",
+            libre_amigos: "Libre Amigos"
+        };
+
+        const wordOverrides = {
+            // Fútbol argentino
+            "BOMBONERA": "estadio",
+            "MONUMENTAL": "estadio",
+            "SUPERCLÁSICO": "partido",
+            "BOCA": "equipo",
+            "RIVER": "equipo",
+            "ESTUDIANTES": "equipo",
+            "RACING": "equipo",
+            "INDEPENDIENTE": "equipo",
+            "HURACÁN": "equipo",
+            "LANÚS": "equipo",
+            "TALLERES": "equipo",
+            "BELGRANO": "equipo",
+            "INSTITUTO": "equipo",
+            "MARADONA": "jugador",
+            "MESSI": "jugador",
+
+            // Lugares
+            "IGUAZÚ": "naturaleza",
+            "CALAFATE": "naturaleza",
+            "PENÍNSULA": "naturaleza",
+            "ACONCAGUA": "montaña",
+            "OBELISCO": "monumento",
+            "RECOLETA": "barrio",
+            "CAMINITO": "paseo",
+            "BARILOCHE": "ciudad",
+            "MENDOZA": "ciudad",
+            "SALTA": "ciudad",
+            "USHUAIA": "ciudad",
+            "ROSARIO": "ciudad",
+            "CAFAYATE": "viñedo",
+            "TIGRE": "delta",
+            "TILCARA": "valle",
+
+            // Córdoba
+            "CUARTETO": "música",
+            "MONA": "artista",
+            "SIERRAS": "lugar",
+            "CHAMUYAR": "jerga",
+            "CULIAU": "jerga",
+            "BOLUDO": "jerga",
+            "BONDI": "transporte",
+            "BIRRA": "bebida",
+            "ASADITO": "comida",
+            "COSQUÍN": "festival",
+
+            // Tango / Folklore
+            "GARDEL": "tango",
+            "BANDONEÓN": "instrumento",
+            "MILONGA": "baile",
+            "PIAZZOLLA": "tango",
+            "CHACARERA": "baile",
+            "ZAMBA": "baile",
+            "VIDALA": "canto",
+            "MALAMBO": "baile",
+            "PAYADOR": "canto",
+            "GAUCHO": "tradición",
+            "FACÓN": "objeto",
+            "PONCHO": "ropa",
+            "ALPARGATAS": "calzado",
+            "BOMBACHA": "ropa",
+            "BOINA": "ropa",
+
+            // Transporte
+            "SUBTE": "vehículo",
+            "COLECTIVO": "vehículo",
+            "REMISE": "servicio",
+            "TAXI": "servicio",
+            "TREN": "vehículo",
+            "COMBI": "vehículo",
+            "TROLEBÚS": "vehículo",
+            "LANCHA": "vehículo",
+            "AVIÓN": "vehículo",
+            "MOTO": "vehículo",
+            "BICICLETA": "vehículo",
+            "UBER": "servicio",
+            "CABIFY": "servicio",
+            "METROBUS": "corredor",
+            "PEAJE": "pago",
+
+            // Animales
+            "CARPINCHO": "animal",
+            "HORNERO": "animal",
+            "ÑANDÚ": "animal",
+            "VIZCACHA": "animal",
+            "CHIMANGO": "animal",
+            "BENTEVEO": "animal",
+            "TERO": "animal",
+            "CARANCHO": "animal",
+            "MARTINETA": "animal",
+            "MULITA": "animal",
+            "ZORRINO": "animal",
+            "COMADREJA": "animal",
+            "LIEBRE": "animal",
+            "YACARÉ": "animal",
+            "DORADO": "animal",
+
+            // Lunfardo
+            "LABURO": "jerga",
+            "GUITA": "jerga",
+            "PIBE": "jerga",
+            "MINA": "jerga",
+            "CHABON": "jerga",
+            "MORFAR": "jerga",
+            "FIACA": "jerga",
+            "QUILOMBO": "jerga",
+            "MANGO": "jerga",
+            "TRUCHO": "jerga",
+            "GROSO": "jerga",
+            "ZAFAR": "jerga",
+
+            // Política / Historia
+            "CABILDO": "edificio",
+            "CONGRESO": "edificio",
+            "CASA": "edificio",
+            "MAYO": "fecha",
+            "INDEPENDENCIA": "evento",
+            "MALVINAS": "historia",
+            "EVITA": "historia",
+            "PERÓN": "historia",
+            "BELGRANO": "historia",
+            "SARMIENTO": "historia",
+            "ROCA": "historia",
+            "YRIGOYEN": "historia",
+            "LIBERTADOR": "historia",
+            "CRUZADA": "historia",
+
+            // Futbolistas
+            "DI MARÍA": "jugador",
+            "AGÜERO": "jugador",
+            "HIGUAÍN": "jugador",
+            "MASCHERANO": "jugador",
+            "RIQUELME": "jugador",
+            "AIMAR": "jugador",
+            "TEVEZ": "jugador",
+            "CRESPO": "jugador",
+            "BATISTUTA": "jugador",
+            "CANIGGIA": "jugador",
+            "REDONDO": "jugador",
+            "KEMPES": "jugador",
+            "PASSARELLA": "jugador",
+            "CRISTIANO": "jugador",
+            "RONALDINHO": "jugador",
+            "PELÉ": "jugador",
+            "NEYMAR": "jugador",
+            "MBAPPÉ": "jugador",
+            "HAALAND": "jugador",
+            "BENZEMA": "jugador",
+            "LEWANDOWSKI": "jugador",
+            "SALAH": "jugador",
+            "MODRIC": "jugador",
+
+            // Peleadores
+            "MCGREGOR": "lucha",
+            "KHABIB": "lucha",
+            "JON JONES": "lucha",
+            "SILVA": "lucha",
+            "GSP": "lucha",
+            "FEDOR": "lucha",
+            "CHUCK LIDDELL": "lucha",
+            "TITO ORTIZ": "lucha",
+            "RONDA ROUSEY": "lucha",
+            "AMANDA NUNES": "lucha",
+            "VALENTINA": "lucha",
+            "ROSE NAMAJUNAS": "lucha",
+            "MIKE TYSON": "boxeo",
+            "MUHAMMAD ALI": "boxeo",
+            "FLOYD": "boxeo",
+            "MANNY": "boxeo",
+            "CANELO": "boxeo",
+            "ANTHONY JOSHUA": "boxeo",
+            "TYSON FURY": "boxeo",
+            "LAILA ALI": "boxeo",
+            "CLARESSA SHIELDS": "boxeo",
+            "MARAVILLA": "boxeo",
+            "CHINO MAIDANA": "boxeo",
+            "NARVÁEZ": "boxeo",
+
+            // Música
+            "DUKI": "palabras",
+            "ABEL PINTOS": "romance",
+            "CHARLY GARCÍA": "artista",
+            "FITO PÁEZ": "artista",
+            "GUSTAVO CERATI": "artista",
+            "SPINETTA": "artista",
+            "ANDRÉS CALAMARO": "artista",
+            "VICENTICO": "artista",
+            "BERSUIT": "banda",
+            "LA RENGA": "banda",
+            "DIVIDIDOS": "banda",
+            "RATA BLANCA": "banda",
+            "LA MONA": "artista",
+            "RODRIGO": "artista",
+            "SOLEDAD": "artista",
+            "CHAQUEÑO PALAVECINO": "artista",
+            "BIZARRAP": "palabras",
+            "TRUENO": "palabras",
+            "TINI": "pop",
+            "MARIA BECERRA": "pop",
+            "NATHY PELUSO": "artista",
+            "MICHAEL JACKSON": "pop",
+            "MADONNA": "pop",
+            "QUEEN": "banda",
+            "THE BEATLES": "banda",
+            "ELVIS PRESLEY": "rock",
+            "BOB MARLEY": "reggae",
+            "SHAKIRA": "pop",
+            "EMINEM": "palabras",
+            "TAYLOR SWIFT": "pop",
+            "ED SHEERAN": "pop",
+            "ADELE": "balada",
+            "BEYONCÉ": "pop",
+            "DESPACITO": "canción",
+            "MACARENA": "canción",
+            "GANGNAM STYLE": "canción",
+            "BOHEMIAN RHAPSODY": "canción"
+        };
+
+        // Función para aplicar el sistema de pistas V3
+        function applyHardHintsV3() {
+            // Primero corregir BONADEO por NARVÁEZ en peleadores
+            const peleadores = wordsByTheme.peleadores;
+            if (peleadores) {
+                const bonadeoIndex = peleadores.findIndex(item => item.word === "BONADEO");
+                if (bonadeoIndex !== -1) {
+                    peleadores[bonadeoIndex] = { word: "NARVÁEZ", easyHint: "Omar", hardHint: "boxeo" };
+                }
+            }
+
+            // Aplicar cambios a todas las categorías
+            Object.entries(wordsByTheme).forEach(([theme, list]) => {
+                const fallback = themeFallback[theme] || "tema";
+
+                list.forEach(item => {
+                    // Mover hardHint actual a easyHint
+                    item.easyHint = item.hardHint;
+
+                    // Aplicar nueva hardHint genérica
+                    const override = wordOverrides[item.word];
+                    item.hardHint = override || fallback;
+
+                    // Sanitizar: máximo 2 palabras
+                    const sanitized = item.hardHint.trim().split(/\s+/).slice(0, 2).join(" ");
+
+                    // Verificar que no contenga la palabra objetivo
+                    const normalizedWord = item.word.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+                    const normalizedHint = sanitized.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+
+                    item.hardHint = normalizedHint.includes(normalizedWord) ? fallback : sanitized;
+                });
+            });
+        }
+
         // Inicialización al cargar la página
         document.addEventListener('DOMContentLoaded', function () {
+            // Aplicar sistema de pistas V3
+            applyHardHintsV3();
+
             loadGameData();
+
+            // Verificar visibilidad de instrucciones
+            checkInstructionsVisibility();
 
             // Disparar el evento change para configurar impostores iniciales
             document.getElementById('player-count').dispatchEvent(new Event('change'));
+
+            // Agregar event listeners para los checkboxes de temáticas
+            Object.keys(activeThemes).forEach(theme => {
+                const checkbox = document.getElementById(theme);
+                if (checkbox) {
+                    checkbox.addEventListener('change', updateActiveThemes);
+                }
+            });
+
+            // Inicializar visibilidad del botón de palabras personalizadas
+            updateActiveThemes();
 
             // Registrar Service Worker para PWA
             if ('serviceWorker' in navigator) {
