@@ -917,8 +917,40 @@
             border: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
 
-        body.theme-impostor .theme-item input[type="checkbox"] {
+        body        .theme-impostor .theme-item input[type="checkbox"] {
             accent-color: #ff2b4a !important;
+        }
+
+        /* ====== BOTÓN DE INSTALACIÓN PWA ====== */
+        #install-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049) !important;
+            color: white !important;
+            font-weight: 800 !important;
+            border: none !important;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        #install-btn:hover {
+            background: linear-gradient(45deg, #45a049, #3d8b40) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5) !important;
+        }
+
+        #install-btn:active {
+            transform: translateY(0) !important;
+        }
+
+        /* Tema impostor para botón de instalación */
+        .theme-impostor #install-btn {
+            background: linear-gradient(45deg, #00C851, #007E33) !important;
+            box-shadow: 0 0 20px rgba(0, 200, 81, 0.4), 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .theme-impostor #install-btn:hover {
+            background: linear-gradient(45deg, #007E33, #00C851) !important;
+            box-shadow: 0 0 25px rgba(0, 200, 81, 0.6), 0 8px 25px rgba(0, 0, 0, 0.4) !important;
         }
 
         .theme-item input[type="checkbox"] {
@@ -1216,6 +1248,9 @@
             <button class="btn btn-secondary" onclick="showHowToPlay()">📖 Cómo Jugar</button>
             <button class="btn btn-secondary" onclick="showCustomWords()" id="custom-words-btn"
                 style="display: none;">✏️ Gestionar Palabras Personalizadas</button>
+            <button class="btn" onclick="installGame()" id="install-btn" style="display: none;">
+                📱 Descargar Juego
+            </button>
         </div>
 
         <!-- Pantalla de Palabras Personalizadas -->
@@ -1401,6 +1436,10 @@
     </div>
 
     <script>
+        // Variables para PWA
+        let deferredPrompt;
+        let installButton = null;
+
         // Variables del juego
         let gameState = {
             players: [],
@@ -2885,6 +2924,125 @@
             });
         }
 
+        // ===== FUNCIONES PWA PARA INSTALACIÓN =====
+        
+        // Función para instalar el juego
+        function installGame() {
+            if (deferredPrompt) {
+                // Mostrar el prompt de instalación
+                deferredPrompt.prompt();
+                
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario aceptó instalar la PWA');
+                        // Analytics
+                        if (window.va) {
+                            window.va('track', 'PWA Install Accepted');
+                        }
+                    } else {
+                        console.log('Usuario rechazó instalar la PWA');
+                    }
+                    deferredPrompt = null;
+                    updateInstallButton();
+                });
+            } else {
+                // Mostrar instrucciones manuales
+                showInstallInstructions();
+            }
+        }
+        
+        // Mostrar instrucciones de instalación manual
+        function showInstallInstructions() {
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            let instructions = '';
+            
+            if (isIOS) {
+                instructions = `
+                    📱 Para instalar en iPhone/iPad:
+                    
+                    1. Toca el botón "Compartir" (⬆️)
+                    2. Selecciona "Agregar a pantalla de inicio"
+                    3. Toca "Agregar"
+                    
+                    ¡Tu juego aparecerá como una app!
+                `;
+            } else if (isAndroid) {
+                instructions = `
+                    📱 Para instalar en Android:
+                    
+                    1. Toca el menú (⋮) del navegador
+                    2. Selecciona "Agregar a pantalla de inicio"
+                    3. Toca "Agregar"
+                    
+                    ¡Tu juego aparecerá como una app!
+                `;
+            } else {
+                instructions = `
+                    💻 Para instalar en tu computadora:
+                    
+                    1. Busca el ícono de instalación (⬇️) en la barra de direcciones
+                    2. Haz clic en "Instalar Impostor"
+                    3. Confirma la instalación
+                    
+                    También puedes usar: Menú → Instalar Impostor
+                `;
+            }
+            
+            alert(instructions);
+        }
+        
+        // Actualizar el estado del botón de instalación
+        function updateInstallButton() {
+            const installBtn = document.getElementById('install-btn');
+            if (!installBtn) return;
+            
+            if (deferredPrompt) {
+                installBtn.style.display = 'block';
+                installBtn.innerHTML = '📱 Descargar Juego';
+                installBtn.title = 'Instalar como aplicación nativa';
+            } else if (window.matchMedia('(display-mode: standalone)').matches) {
+                // Ya está instalado
+                installBtn.style.display = 'none';
+            } else {
+                // Mostrar con instrucciones manuales
+                installBtn.style.display = 'block';
+                installBtn.innerHTML = '📲 Instalar Juego';
+                installBtn.title = 'Ver instrucciones de instalación';
+            }
+        }
+        
+        // Event listeners para PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevenir que Chrome 67 y anteriores muestren automáticamente el prompt
+            e.preventDefault();
+            
+            // Guardar el evento para poder usarlo después
+            deferredPrompt = e;
+            
+            // Mostrar el botón de instalación
+            updateInstallButton();
+            
+            console.log('PWA: Install prompt disponible');
+        });
+        
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('PWA: App instalada exitosamente');
+            updateInstallButton();
+            
+            // Analytics
+            if (window.va) {
+                window.va('track', 'PWA Installed Successfully');
+            }
+            
+            // Mostrar mensaje de éxito
+            setTimeout(() => {
+                alert('🎉 ¡Impostor instalado exitosamente!\n\nYa puedes encontrar el juego en tu pantalla de inicio.');
+            }, 1000);
+        });
+
         // Inicialización al cargar la página
         document.addEventListener('DOMContentLoaded', function () {
             // Aplicar sistema de pistas V3
@@ -2908,6 +3066,9 @@
 
             // Inicializar visibilidad del botón de palabras personalizadas
             updateActiveThemes();
+
+            // Inicializar botón de instalación PWA
+            setTimeout(updateInstallButton, 1000);
 
             // Registrar Service Worker para PWA
             if ('serviceWorker' in navigator) {
